@@ -1,0 +1,35 @@
+#!/icg/bin/perl
+
+use LiquidPlanner;
+my $lp = LiquidPlanner->new(autofail => 1);
+
+my ($type, $id) = @ARGV;
+my $obj = $lp->get_object($type, $id);
+show($obj);
+
+sub show {
+  my $obj = shift;
+  if (ref $obj eq "HASH") {
+    print show_obj($obj), "\n";
+  } elsif (ref $obj eq "ARRAY") {
+    print show_obj($_), "\n" for @$obj;
+  } else {
+    die "Don't know how to show $obj; aborting";
+  }
+}
+
+sub show_obj {
+  my $obj = shift;
+  my $maxlen = max(map length, keys %$obj);
+  my $out = "";
+  for my $k  (sort keys %$obj) {
+    $out .= sprintf("%*s   %s\n", $maxlen, $k, $obj->{$k});
+  }
+  return $out;
+}
+
+sub max {
+  my $max = shift;
+  $max = $max > $_ ? $max : $_ for @_;
+  return $max;
+}

@@ -33,6 +33,7 @@ sub new {
 
   $self->{json} = JSON::Any->new();
   $self->set_autofail($args{autofail});
+  $self->{debug} = $args{debug};
 
   return $self;
 }
@@ -107,24 +108,46 @@ sub get {
 }
 
 sub get_objects {
-  my ($self, $type) = @_;
-  my $url = $self->build_request_url($type);
-  return $self->get($url);
+  my ($self, @path) = @_;
+  my $url = $self->build_request_url(@path);
+  return my $res = $self->get($url);
 }
 
 sub get_object {
-  my ($self, $type, $id) = @_;
-  my $url = $self->build_request_url($type, $id);
+  my ($self, @path) = @_;
+  my $url = $self->build_request_url(@path);
   return $self->get($url);
 }
+
+my %dont_infer_workspace = map {$_ => 1} qw(workspaces account);
 
 sub build_request_url {
   my ($self, @segs) = @_;
   my $url = $self->root_url->clone;
+  unless ($dont_infer_workspace{$segs[0]}) {
+    unshift @segs, "workspaces", $self->default_workspace_id;
+  }
   $url->path_segments($url->path_segments, @segs);
-#  warn "# -> url is " . $url->as_string;
+  warn "# -> url is " . $url->as_string if $self->{debug};
   return $url;
 }
+
+sub default_workspace_id {
+  my $self = shift;
+  if (exists $self->{workspace_id}) {
+    return $self->{workspace_id} if defined $self->{workspace_id};
+    croak "Missing workspace ID parameter";
+  }
+
+  my $ws = $self->get_objects("workspaces");
+  if (@$ws == 1) {
+    $self->set_default_workspace_id($ws->[0]{id});
+  } else {
+    die "Can't determine default workspace ID; aborting";
+  }
+}
+
+sub set_default_workspace_id { $_[0]{workspace_id} = $_[1] }
 
 sub clear_error {
   my $self = shift;
@@ -153,7 +176,7 @@ sub get_error_message {
 }
 
 my %known_types = map { $_ => 1, "${_}s" => 1 }
-  qw(account workspace task tasklist); # etc.
+  qw(account workspaces tasks tasklists); # etc.
 
 sub known_types {
   return keys %known_types;

@@ -3,14 +3,13 @@
 use LiquidPlanner;
 my $lp = LiquidPlanner->new(autofail => 1);
 
-my ($type, $id) = @ARGV;
-unless ($lp->is_known_type($type)) {
-  warn "Unknown object type '$type'\n";
-  warn "Known types are: ", join(" ", sort $lp->known_types), "\n";
-  exit 1;
-}
+#unless ($lp->is_known_type($type)) {
+#  warn "Unknown object type '$type'\n";
+#  warn "Known types are: ", join(" ", sort $lp->known_types), "\n";
+#  exit 1;
+#}
 
-my $obj = $lp->get_object($type, $id);
+my $obj = is_even(@ARGV) ? $lp->get_object(@ARGV) : $lp->get_objects(@ARGV);
 show($obj);
 
 sub show {
@@ -38,4 +37,8 @@ sub max {
   my $max = shift;
   $max = $max > $_ ? $max : $_ for @_;
   return $max;
+}
+
+sub is_even($) {
+  $_[0] % 2 == 0;
 }

@@ -7,6 +7,7 @@ use ICG::Util::LoadModule;
 use URI::URL;
 use Carp 'croak';
 
+
 # Legal %args:
 #  username, password
 #  credential_key (default LiquidPanner)
@@ -120,7 +121,7 @@ sub build_request_url {
   my ($self, @segs) = @_;
   my $url = $self->root_url->clone;
   $url->path_segments($url->path_segments, @segs);
-  warn "# -> url is " . $url->as_string;
+#  warn "# -> url is " . $url->as_string;
   return $url;
 }
 
@@ -129,6 +130,7 @@ sub clear_error {
   delete @{$self}{qw(error_code error_text error)};
 }
 
+# This thing should really be a subobject
 sub set_error {
   my ($self, $response) = @_;
   $self->{error_code} = $response->code;
@@ -136,5 +138,25 @@ sub set_error {
   $self->{error} = eval { $self->_decode($response->content) };
   return;
 }
+
+sub get_error {
+  return $_[0]{error};
+}
+
+sub get_error_message {
+  return $_[0]{error} && $_[0]{error}{message};
+}
+
+my %known_types = map { $_ => 1 }
+  qw(Account Workspace Task Tasklist); # etc.
+
+sub known_types {
+  return keys %known_types;
+}
+
+sub is_known_type {
+  return $known_types{$_[0]};
+}
+
 
 1;

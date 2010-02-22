@@ -1,7 +1,8 @@
-t/liquidPlanner.t
-t/connect.t
-t/liquidPlanner-UA.t
-lib/LiquidPlanner/UserAgent.pm
-lib/LiquidPlanner.pm
-README
 Makefile.PL
+README
+lib/LiquidPlanner.pm
+lib/LiquidPlanner/UserAgent.pm
+t/connect.t
+t/error.t
+t/liquidPlanner-UA.t
+t/liquidPlanner.t

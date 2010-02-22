@@ -152,15 +152,16 @@ sub get_error_message {
   return $_[0]{error} && $_[0]{error}{message};
 }
 
-my %known_types = map { $_ => 1 }
-  qw(Account Workspace Task Tasklist); # etc.
+my %known_types = map { $_ => 1, "${_}s" => 1 }
+  qw(account workspace task tasklist); # etc.
 
 sub known_types {
   return keys %known_types;
 }
 
 sub is_known_type {
-  return $known_types{$_[0]};
+  my $type = $_[1];
+  return $known_types{$type};
 }
 
 sub set_autofail {

@@ -1,6 +1,6 @@
 #!/icg/bin/perl
 
-use Test::More tests => 7;
+use Test::More tests => 9;
 use LiquidPlanner;
 
 my $lp = LiquidPlanner->new();
@@ -19,5 +19,10 @@ like($@, qr/(?i)bad request/);
 $lp->set_autofail(0);
 eval { $lp->get_object('Mxyzptlk') };
 ok(! $@, "no autofail, so no exception");
+
+{ my $lp2 = LiquidPlanner->new(autofail => 1);
+  ok($lp2);
+  ok($lp2->autofail, "constructor autofail option");
+}
 
 1;

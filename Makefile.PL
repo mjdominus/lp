@@ -1,3 +1,3 @@
 #!/icg/bin/perl
 use ExtUtils::MakeMaker;
-WriteMakefile();
+WriteMakefile(NAME => "LiquidPlanner");

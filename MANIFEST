@@ -1,4 +1,7 @@
 t/liquidPlanner.t
+t/connect.t
 t/liquidPlanner-UA.t
 lib/LiquidPlanner/UserAgent.pm
 lib/LiquidPlanner.pm
+README
+Makefile.PL

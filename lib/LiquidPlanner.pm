@@ -32,6 +32,7 @@ sub new {
   }
 
   $self->{json} = JSON::Any->new();
+  $self->set_autofail($args{autofail});
 
   return $self;
 }
@@ -136,7 +137,11 @@ sub set_error {
   $self->{error_code} = $response->code;
   $self->{error_text} = $response->content;
   $self->{error} = eval { $self->_decode($response->content) };
-  return;
+  if ($self->autofail) {
+    die $self->get_error_message || $self->{error_text} || $self->{error_code};
+  } else {
+    return;
+  }
 }
 
 sub get_error {
@@ -157,6 +162,13 @@ sub known_types {
 sub is_known_type {
   return $known_types{$_[0]};
 }
+
+sub set_autofail {
+  my ($self, $val) = @_;
+  $self->{autofail} = $val;
+}
+
+sub autofail { $_[0]{autofail} }
 
 
 1;

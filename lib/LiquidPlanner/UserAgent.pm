@@ -15,6 +15,7 @@ sub set_credentials {
   $self->icg_private_hash->{Pass} = $p;
 }
 
+# This is a bad name; too easy to confuse with ->credentials
 sub get_credentials {
   my $self = shift;
   my $h = $self->icg_private_hash();
@@ -28,5 +29,33 @@ sub _setup_icg_private_hash {
 sub icg_private_hash {
   return $_[0]{ICG_PRIVATE};
 }
+
+sub set_root_url {
+  my $self = shift;
+  $self->icg_private_hash->{root_url} = shift;
+}
+
+sub root_url {
+  my $self = shift;
+  return $self->icg_private_hash->{root_url};
+}
+
+sub check_url {
+  my ($self, $url, $exception) = @_;
+  if ($self->root_url->netloc eq $url->netloc) {
+    return 1;
+  } elsif ($exception) {
+    die $exception;
+  } else {
+    return;
+  }
+}
+
+sub get_basic_credentials {
+  my ($self, $realm, $uri, $proxy) = @_;
+  $self->check_url($uri, "URL '$uri' out of bounds");
+  return $self->get_credentials();
+}
+
 
 1;

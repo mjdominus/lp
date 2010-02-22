@@ -1,8 +1,10 @@
 
 package LiquidPlanner;
+use strict;
 use JSON::Any;
 use ICG::Credentials;
 use ICG::Util::LoadModule;
+use URI::URL;
 use Carp 'croak';
 
 # Legal %args:
@@ -22,6 +24,13 @@ sub new {
     $ua->set_credentials($u, $p);
     $self->set_user_agent($ua);
   }
+
+  { my $url = $args{root_url} || $self->default_root_url();
+    $self->{root_url} = URI::URL->new($url);
+    $self->user_agent->set_root_url($self->{root_url});
+  }
+
+  $self->{json} = JSON::Any->new();
 
   return $self;
 }
@@ -68,5 +77,64 @@ sub set_user_agent {
 }
 
 sub user_agent { $_[0]{UA} }
+
+sub default_root_url { "https://app.liquidplanner.com/api" }
+sub root_url { return $_[0]{root_url} }
+
+sub _decode {
+  my $self = shift;
+  return $self->{json}->decode(@_);
+}
+
+sub _encode {
+  my $self = shift;
+  return $self->{json}->encode(@_);
+}
+
+sub get {
+  my ($self, $url) = @_;
+  my $response = $self->user_agent->get($url);
+  if ($response->is_success) {
+    my $json = $response->content;
+    my $obj = $self->_decode($json);
+    $self->clear_error();
+    return $obj;
+  } else {
+    return $self->set_error($response);
+  }
+}
+
+sub get_objects {
+  my ($self, $type) = @_;
+  my $url = $self->build_request_url($type);
+  return $self->get($url);
+}
+
+sub get_object {
+  my ($self, $type, $id) = @_;
+  my $url = $self->build_request_url($type, $id);
+  return $self->get($url);
+}
+
+sub build_request_url {
+  my ($self, @segs) = @_;
+  my $url = $self->root_url->clone;
+  $url->path_segments($url->path_segments, @segs);
+  warn "# -> url is " . $url->as_string;
+  return $url;
+}
+
+sub clear_error {
+  my $self = shift;
+  delete @{$self}{qw(error_code error_text error)};
+}
+
+sub set_error {
+  my ($self, $response) = @_;
+  $self->{error_code} = $response->code;
+  $self->{error_text} = $response->content;
+  $self->{error} = eval { $self->_decode($response->content) };
+  return;
+}
 
 1;

@@ -1,1 +1,5 @@
 Automatic retry on throttling error.
+
+Something so that you don't keep trying to put "folder" or "Folders"
+into request paths when it should be "folders".
+

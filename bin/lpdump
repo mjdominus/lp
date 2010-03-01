@@ -1,8 +1,15 @@
 #!/icg/bin/perl
 
 use LiquidPlanner;
+use Getopt::Std;
+
+my %opt;
+usage() unless getopts('w:', \%opt);
+my $default_wsid = $opt{w} || $ENV{LIQUIDPLANNER_WORKSPACE};
+
 my $lp = LiquidPlanner->new(autofail => 1);
 $lp->{debug} = $ENV{DEBUG};
+$lp->set_default_workspace_id($default_wsid) if $default_wsid;
 
 #unless ($lp->is_known_type($type)) {
 #  warn "Unknown object type '$type'\n";
@@ -29,7 +36,12 @@ sub show_obj {
   my $maxlen = max(map length, keys %$obj);
   my $out = "";
   for my $k  (sort keys %$obj) {
-    $out .= sprintf("%*s   %s\n", $maxlen, $k, $obj->{$k});
+    my $val = $obj->{$k};
+    if (ref $val eq "ARRAY") {
+      $val = join ", ", @$val;
+      $val = "[$val]";
+    }
+    $out .= sprintf("%*s   %s\n", $maxlen, $k, $val);
   }
   return $out;
 }

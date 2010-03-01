@@ -2,6 +2,7 @@
 
 use LiquidPlanner;
 my $lp = LiquidPlanner->new(autofail => 1);
+$lp->{debug} = $ENV{DEBUG};
 
 #unless ($lp->is_known_type($type)) {
 #  warn "Unknown object type '$type'\n";

@@ -1,16 +1,22 @@
 #!/icg/bin/perl
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 use LiquidPlanner;
+use LiquidPlanner::Test;
 
-my $lp = LiquidPlanner->new();
+
+my $lp = connection();
 ok($lp);
 
 my ($a) = $lp->get_objects('workspaces');
 ok($a, "get workspace array");
 is(ref $a, "ARRAY", "array type");
-is(@$a, 1, "unique workspace");
-my $w = $a->[0];
+is(@$a, 2, "two workspaces");
+my $w;
+for my $_w (@$a) {
+  $w = $_w and last if $_w->{id} == get_test_wsid();
+}
+ok($w);
 is($w->{type}, "Workspace", "workspace type");
 my $id = $w->{id};
 ok($id, "workspace id=$id");

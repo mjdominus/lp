@@ -1,9 +1,11 @@
 #!/icg/bin/perl
 
-use Test::More tests => 12;
+# use Test::More tests => 12;
+use Test::More skip_all => "Can't test default WS inference when there are multiple workspaces" ;
 use LiquidPlanner;
+use LiquidPlanner::Test;
 
-my $lp1 = LiquidPlanner->new();
+my $lp1 = connection();
 ok($lp1);
 my $ws = $lp1->get_objects("workspaces")->[0];
 ok($ws);

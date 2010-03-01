@@ -13,6 +13,7 @@ use Carp 'croak';
 #  username, password
 #  credential_key (default LiquidPanner)
 #  user
+#  workspace_id
 sub new {
   my ($class, %args) = @_;
   my $self = bless {} => $class;
@@ -35,6 +36,8 @@ sub new {
   $self->{json} = JSON::Any->new();
   $self->set_autofail($args{autofail});
   $self->{debug} = $args{debug};
+  $self->set_default_workspace_id($args{workspace_id})
+    if exists $args{workspace_id};
 
   return $self;
 }
@@ -133,6 +136,10 @@ sub build_request_url {
   return $url;
 }
 
+sub set_default_workspace_id {
+  $_[0]{workspace_id} = $_[1];
+}
+
 sub default_workspace_id {
   my $self = shift;
   if (exists $self->{workspace_id}) {
@@ -147,8 +154,6 @@ sub default_workspace_id {
     die "Can't determine default workspace ID; aborting";
   }
 }
-
-sub set_default_workspace_id { $_[0]{workspace_id} = $_[1] }
 
 sub clear_error {
   my $self = shift;

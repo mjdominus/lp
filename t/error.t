@@ -2,8 +2,9 @@
 
 use Test::More tests => 9;
 use LiquidPlanner;
+use LiquidPlanner::Test;
 
-my $lp = LiquidPlanner->new();
+my $lp = connection();
 ok($lp);
 my $account = $lp->get_object('Mxyzptlk');
 ok(! $account);

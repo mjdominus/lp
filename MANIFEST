@@ -3,6 +3,7 @@ README
 bin/lpdump
 lib/LiquidPlanner.pm
 lib/LiquidPlanner/Context.pm
+lib/LiquidPlanner/Test.pm
 lib/LiquidPlanner/UserAgent.pm
 t/connect.t
 t/context.t

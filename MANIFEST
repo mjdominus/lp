@@ -2,8 +2,10 @@ Makefile.PL
 README
 bin/lpdump
 lib/LiquidPlanner.pm
+lib/LiquidPlanner/Context.pm
 lib/LiquidPlanner/UserAgent.pm
 t/connect.t
+t/context.t
 t/default_ws_id.t
 t/error.t
 t/get.t

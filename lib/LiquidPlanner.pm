@@ -4,6 +4,7 @@ use strict;
 use JSON::Any;
 use ICG::Credentials;
 use ICG::Util::LoadModule;
+use LiquidPlanner::Context;
 use URI::URL;
 use Carp 'croak';
 
@@ -194,5 +195,15 @@ sub set_autofail {
 
 sub autofail { $_[0]{autofail} }
 
+# Todo: Add optional folder and tasklist arguments here
+sub new_context {
+  my $self = shift;
+  my $factory = $self->context_factory();
+  return $factory->new(Connection => $self, @_);
+}
+
+sub context_factory {
+  return "LiquidPlanner::Context";
+}
 
 1;

@@ -4,7 +4,7 @@ use LiquidPlanner;
 use Getopt::Std;
 
 my %opt;
-usage() unless getopts('w:', \%opt);
+usage() unless getopts('iw:', \%opt);
 my $default_wsid = $opt{w} || $ENV{LIQUIDPLANNER_WORKSPACE};
 
 my $lp = LiquidPlanner->new(autofail => 1);
@@ -17,7 +17,8 @@ $lp->set_default_workspace_id($default_wsid) if $default_wsid;
 #  exit 1;
 #}
 
-my $obj = is_even(@ARGV) ? $lp->get_object(@ARGV) : $lp->get_objects(@ARGV);
+my $option = $opt{i} ? { include_tasks => true } : { } ;
+my $obj = is_even(@ARGV) ? $lp->get_object(@ARGV, $option) : $lp->get_objects(@ARGV, $option);
 show($obj);
 
 sub show {

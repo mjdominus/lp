@@ -127,11 +127,20 @@ my %dont_infer_workspace = map {$_ => 1} qw(workspaces account);
 
 sub build_request_url {
   my ($self, @segs) = @_;
+
+  my $opt;
+  $opt = pop @segs if ref($segs[-1]) eq "HASH";
+
   my $url = $self->root_url->clone;
   unless ($dont_infer_workspace{$segs[0]}) {
     unshift @segs, "workspaces", $self->default_workspace_id;
   }
   $url->path_segments($url->path_segments, @segs);
+
+  if ($opt) {
+    $url->query_form(%$opt);
+  }
+
   warn "# -> url is " . $url->as_string if $self->{debug};
   return $url;
 }

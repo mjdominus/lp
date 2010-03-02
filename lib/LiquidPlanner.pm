@@ -129,7 +129,7 @@ sub build_request_url {
   my ($self, @segs) = @_;
 
   my $opt;
-  $opt = pop @segs if ref($segs[-1]) eq "HASH";
+  $opt = shift @segs if ref($segs[0]) eq "HASH";
 
   my $url = $self->root_url->clone;
   unless ($dont_infer_workspace{$segs[0]}) {

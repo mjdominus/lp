@@ -2,9 +2,14 @@
 
 use LiquidPlanner;
 use Getopt::Std;
+use Sort::ByExample;
+use strict; 
 
 my %opt;
-usage() unless getopts('iw:', \%opt);
+usage() unless getopts('RCtw:', \%opt);
+
+my $keysort = Sort::ByExample::sbe(['id'], sub { $_[0] cmp $_[1] });
+
 my $default_wsid = $opt{w} || $ENV{LIQUIDPLANNER_WORKSPACE};
 
 my $lp = LiquidPlanner->new(autofail => 1);
@@ -17,34 +22,46 @@ $lp->set_default_workspace_id($default_wsid) if $default_wsid;
 #  exit 1;
 #}
 
-my $option = $opt{i} ? { include_tasks => true } : { } ;
-my $obj = is_even(@ARGV) ? $lp->get_object(@ARGV, $option) : $lp->get_objects(@ARGV, $option);
+my $option = {};
+$option->{include_tasks} = "true" if $opt{t};
+$option->{include_children} = "immediate" if $opt{C};
+$option->{include_children} = "all" if $opt{R};
+my $obj = is_even(@ARGV) ? $lp->get_object($option, @ARGV) : $lp->get_objects($option, @ARGV);
 show($obj);
 
 sub show {
   my $obj = shift;
-  if (ref $obj eq "HASH") {
-    print show_obj($obj), "\n";
-  } elsif (ref $obj eq "ARRAY") {
-    print show_obj($_), "\n" for @$obj;
-  } else {
-    die "Don't know how to show $obj; aborting";
-  }
+  print obj_to_lines($obj);
 }
 
-sub show_obj {
+sub obj_to_lines {
   my $obj = shift;
-  my $maxlen = max(map length, keys %$obj);
-  my $out = "";
-  for my $k  (sort keys %$obj) {
-    my $val = $obj->{$k};
-    if (ref $val eq "ARRAY") {
-      $val = join ", ", @$val;
-      $val = "[$val]";
+  my $indent1 = shift || "";  # first line indent
+  my $indent = shift || "";   # subsequent lines indent
+  if (ref $obj eq "ARRAY") {
+    if (@$obj == 0) { return $indent1 . "[ ]\n" }
+    my ($item1, @rest) = @$obj;
+    my @lines = obj_to_lines($item1, "$indent1\[ ", "$indent| ");
+    push @lines,  map obj_to_lines($_, "$indent| ", "$indent| "), @rest;
+    push @lines, "$indent\] \n";
+    return @lines;
+  } elsif (ref $obj eq "HASH") {
+    my $maxlen = max(map length, keys %$obj);
+    my @lines;
+    push @lines, "$indent1\{\n";
+    for my $k ($keysort->(keys %$obj)) {
+      my $keystr = $indent . sprintf("  %*s  ", $maxlen, $k);
+      push @lines, obj_to_lines($obj->{$k}, $keystr, " " x length($keystr));
     }
-    $out .= sprintf("%*s   %s\n", $maxlen, $k, $val);
+    push @lines, "$indent\}\n";
+    return @lines;
+  } else {
+    my $str = $obj;
+    $str =~ s/\n/\\n/g;
+    $str =~ s/\r/\\r/g;
+    $str =~ s/\t/\\t/g;
+    return $indent1 . $str . "\n";
   }
-  return $out;
 }
 
 sub max {

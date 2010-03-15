@@ -53,7 +53,7 @@ sub check_url {
 
 sub get_basic_credentials {
   my ($self, $realm, $uri, $proxy) = @_;
-  $self->check_url($uri, "URL '$uri' out of bounds");
+  $self->check_url(URI::URL->new($uri), "URL '$uri' out of bounds");
   return $self->get_credentials();
 }
 

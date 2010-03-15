@@ -57,4 +57,43 @@ sub get_object {
 
 sub connection { $_[0]{Connection} }
 
+sub create_tasklist {
+  my $self = shift;
+  my $name = shift;
+
+  return
+    $self->create(path => 'tasklists',
+                  arg => { tasklist => { name => $name } },
+                 );
+}
+
+sub create {
+  my $self = shift;
+  my %args = @_;
+  my $url = $self->build_request_url($args{path});
+  my $json = $self->_encode($args{arg});
+  my $request = HTTP::Request->new(POST => $url, [], $json);
+  return $self->request($request);
+}
+
+sub build_request_url {
+  my $self = shift;
+  return $self->connection->build_request_url(@_);
+}
+
+sub request {
+  my ($self, $req) = @_;
+  return $self->connection->request($req);
+}
+
+sub _encode {
+  my $self = shift;
+  return $self->connection->_encode(@_);
+}
+
+sub _decode {
+  my $self = shift;
+  return $self->connection->_decode(@_);
+}
+
 1;

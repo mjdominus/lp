@@ -100,7 +100,13 @@ sub _encode {
 
 sub get {
   my ($self, $url) = @_;
-  my $response = $self->user_agent->get($url);
+  my $req = HTTP::Request->new("GET", $url);
+  return $self->request($req);
+}
+
+sub request {
+  my ($self, $req) = @_;
+  my $response = $self->user_agent->request($req);
   if ($response->is_success) {
     my $json = $response->content;
     my $obj = $self->_decode($json);
@@ -217,6 +223,7 @@ sub new_context {
 }
 
 sub context_factory {
+  require LiquidPlanner::Context;
   return "LiquidPlanner::Context";
 }
 

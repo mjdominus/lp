@@ -1,6 +1,6 @@
 
 use LiquidPlanner;
-use Test::More tests => 1;
+use Test::More tests => 3;
 use LiquidPlanner::Test;
 
 use_ok("LiquidPlanner::Context");
@@ -14,7 +14,14 @@ my $tl = $context->create_tasklist();
 # get root tasklist and look for new tasklist
 {
   my $rtl = $context->default_tasklist();
-  
+  ok($rtl);
+  my $FOUND = 0;
+  for my $xtl ($rtl->children) {
+    if ($tl->id == $xlt->id) {
+      $FOUND=1; last;
+    }
+  }
+  ok($FOUND, "look for new tasklist in root tasklist");
 }
 
 # get root folder and look for new folder

@@ -2,10 +2,14 @@ Makefile.PL
 README
 bin/lpdump
 lib/LiquidPlanner.pm
+lib/LiquidPlanner/ObjFactory.pm
 lib/LiquidPlanner/Context.pm
-lib/LiquidPlanner/Test.pm
 lib/LiquidPlanner/UserAgent.pm
-t/connect.t
+lib/LiquidPlanner/Test.pm
+lib/LiquidPlanner/Object.pm
+lib/LiquidPlanner/Object/Tasklist.pm
+lib/LiquidPlanner/Object/Folder.pm
+lib/LiquidPlanner/Object/Member.pm
 t/context.t
 t/default_ws_id.t
 t/error.t

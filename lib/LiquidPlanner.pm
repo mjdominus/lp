@@ -120,13 +120,13 @@ sub request {
 sub get_objects {
   my ($self, @path) = @_;
   my $url = $self->build_request_url(@path);
-  return my $res = $self->get($url);
+  return $self->object_factory->build($self->get($url));
 }
 
 sub get_object {
   my ($self, @path) = @_;
   my $url = $self->build_request_url(@path);
-  return $self->get($url);
+  return $self->object_factory->build($self->get($url));
 }
 
 my %dont_infer_workspace = map {$_ => 1} qw(workspaces account);
@@ -225,6 +225,11 @@ sub new_context {
 sub context_factory {
   require LiquidPlanner::Context;
   return "LiquidPlanner::Context";
+}
+
+sub object_factory {
+  require LiquidPlanner::ObjFactory;
+  return "LiquidPlanner::ObjFactory";
 }
 
 1;

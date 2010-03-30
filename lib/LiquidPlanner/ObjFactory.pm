@@ -8,11 +8,22 @@ sub new {
 }
 
 sub build {
+  my ($self, $arg) = @_;
+  if (ref $arg eq "ARRAY") {
+    my @objs = map $self->build_obj($_), @$arg;
+    return \@objs;
+  } else {
+    return $self->build_obj($arg);
+  }
+}
+
+sub build_obj {
   my ($self, $hash) = @_;
   my $type = $hash->{type}
     or croak ref($self), " couldn't infer type of object";
   return $self->build_type($type, $hash);
 }
+
 
 sub build_type {
   my ($self, $type, $hash) = @_;

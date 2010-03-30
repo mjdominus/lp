@@ -7,9 +7,10 @@ lib/LiquidPlanner/Context.pm
 lib/LiquidPlanner/UserAgent.pm
 lib/LiquidPlanner/Test.pm
 lib/LiquidPlanner/Object.pm
-lib/LiquidPlanner/Object/Tasklist.pm
 lib/LiquidPlanner/Object/Folder.pm
 lib/LiquidPlanner/Object/Member.pm
+lib/LiquidPlanner/Object/Tasklist.pm
+lib/LiquidPlanner/Object/Workspace.pm
 t/context.t
 t/default_ws_id.t
 t/error.t

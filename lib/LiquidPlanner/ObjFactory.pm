@@ -9,6 +9,7 @@ sub new {
 
 sub build {
   my ($self, $arg) = @_;
+  return unless defined $arg;  # undef in, undef out
   if (ref $arg eq "ARRAY") {
     my @objs = map $self->build_obj($_), @$arg;
     return \@objs;

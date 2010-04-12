@@ -59,7 +59,7 @@ sub connection { $_[0]{Connection} }
 
 sub create_tasklist {
   my $self = shift;
-  my $name = shift;
+  my $name = shift || "(new tasklist)";
 
   return
     $self->create(path => 'tasklists',
@@ -72,7 +72,7 @@ sub create {
   my %args = @_;
   my $url = $self->build_request_url($args{path});
   my $json = $self->_encode($args{arg});
-  my $request = HTTP::Request->new(POST => $url, [], $json);
+  my $request = HTTP::Request->new(POST => $url, ["Content-type" => "application/json"], $json);
   return $self->request($request);
 }
 

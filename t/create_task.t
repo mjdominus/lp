@@ -9,7 +9,7 @@ my $lp = connection();
 my $context = $lp->new_context();
 
 # Create a new tasklist and a new folder
-my $tl = $context->create_tasklist();
+my $tl = $context->create_tasklist("test $$");
 
 # get root tasklist and look for new tasklist
 {

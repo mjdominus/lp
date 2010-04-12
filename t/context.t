@@ -8,5 +8,5 @@ use_ok("LiquidPlanner::Context");
 my $lp = connection();
 my $context = $lp->new_context();
 ok($context);
-is($context->current_folder->{name}, "ICGroup API Sandbox");
-is($context->current_tasklist->{name}, "ICGroup API Sandbox");
+is($context->current_folder->{name}, test_space_name());
+is($context->current_tasklist->{name}, test_space_name());

@@ -14,7 +14,7 @@ is(ref $a, "ARRAY", "array type");
 is(@$a, 2, "two workspaces");
 my $w;
 for my $_w (@$a) {
-  $w = $_w and last if $_w->{id} == get_test_wsid();
+  $w = $_w and last if $_w->{id} == test_space_id();
 }
 ok($w);
 is($w->{type}, "Workspace", "workspace type");

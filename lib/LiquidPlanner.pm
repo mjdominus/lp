@@ -232,4 +232,9 @@ sub object_factory {
   return "LiquidPlanner::ObjFactory";
 }
 
+sub die {
+  my $self = shift;
+  die $self->get_error->{message};
+}
+
 1;
